@@ -5,13 +5,21 @@ from tkinter.font import Font
 import math
 
 def find_gamesettings_files():
-    base_path = os.path.expanduser("~\\Documents\\My Games\\Rainbow Six - Siege")
+    possible_paths = [
+        os.path.expanduser("~\\Documents\\My Games\\Rainbow Six - Siege"),
+        os.path.expanduser("~\\OneDrive\\Documents\\My Games\\Rainbow Six - Siege")
+    ]
+    
     gamesettings_files = []
-    for folder in os.listdir(base_path):
-        if folder != "Benchmark" and os.path.isdir(os.path.join(base_path, folder)):
-            file_path = os.path.join(base_path, folder, "GameSettings.ini")
-            if os.path.exists(file_path):
-                gamesettings_files.append(file_path)
+    
+    for base_path in possible_paths:
+        if os.path.exists(base_path):
+            for folder in os.listdir(base_path):
+                if folder != "Benchmark" and os.path.isdir(os.path.join(base_path, folder)):
+                    file_path = os.path.join(base_path, folder, "GameSettings.ini")
+                    if os.path.exists(file_path):
+                        gamesettings_files.append(file_path)
+    
     return gamesettings_files
 
 def read_current_server(file_path):
@@ -22,27 +30,37 @@ def read_current_server(file_path):
     return "default"
 
 def write_new_server(file_path, new_server):
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-    
-    for i, line in enumerate(lines):
-        if line.startswith("DataCenterHint="):
-            lines[i] = f"DataCenterHint={new_server}\n"
-            break
-    
-    with open(file_path, 'w') as file:
-        file.writelines(lines)
+    try:
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+        
+        for i, line in enumerate(lines):
+            if line.startswith("DataCenterHint="):
+                lines[i] = f"DataCenterHint={new_server}\n"
+                break
+        
+        with open(file_path, 'w') as file:
+            file.writelines(lines)
+        return True
+    except Exception as e:
+        print(f"Error writing to file {file_path}: {str(e)}")
+        return False
 
 def change_server(server):
     gamesettings_files = find_gamesettings_files()
     if not gamesettings_files:
-        messagebox.showerror("Error", "No GameSettings.ini files found.")
+        messagebox.showerror("Error", "No GameSettings.ini files found. Please check if the game is installed correctly.")
         return
     
+    success_count = 0
     for file_path in gamesettings_files:
-        write_new_server(file_path, server)
+        if write_new_server(file_path, server):
+            success_count += 1
     
-    messagebox.showinfo("Success", f"Server changed to {servers[server]} for all accounts. Please restart the game.")
+    if success_count > 0:
+        messagebox.showinfo("Success", f"Server changed to {servers[server]} for {success_count} account(s). Please restart the game.")
+    else:
+        messagebox.showerror("Error", "Failed to change server. Please check file permissions and try again.")
 
 class ResponsiveUI(tk.Tk):
     def __init__(self):
