@@ -60,7 +60,6 @@ class ResponsiveUI(tk.Tk):
         self.bind("<Configure>", self.on_resize)
 
     def create_widgets(self):
-        # Styles
         style = ttk.Style()
         style.theme_use('clam')
         style.configure('TButton', font=('Arial', 10), background='#3498db', foreground='white')
@@ -121,7 +120,7 @@ class ResponsiveUI(tk.Tk):
             row = i // num_columns
             col = i % num_columns
             button.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
-            button.config(width=1)  # Reset width to allow proper scaling
+            button.config(width=1)
 
 # Server list dictionary
 servers = {
