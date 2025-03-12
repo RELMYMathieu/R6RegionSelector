@@ -18,11 +18,10 @@ a = Analysis(
     noarchive=False,
 )
 
-# Clean up unnecessary binaries to reduce false positives
 excluded_binaries = [
-    'vcruntime140.dll',  # Already on most systems
+    'vcruntime140.dll',
     'VCRUNTIME140_1.dll',
-    'api-ms-win',  # Windows system DLLs
+    'api-ms-win',
     'Qt5',
 ]
 

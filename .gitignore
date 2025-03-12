@@ -1,0 +1,15 @@
+build/R6SiegeServerChanger/Analysis-00.toc
+build/R6SiegeServerChanger/base_library.zip
+build/R6SiegeServerChanger/EXE-00.toc
+build/R6SiegeServerChanger/PKG-00.toc
+build/R6SiegeServerChanger/PYZ-00.pyz
+build/R6SiegeServerChanger/PYZ-00.toc
+build/R6SiegeServerChanger/R6SiegeServerChanger.pkg
+build/R6SiegeServerChanger/warn-R6SiegeServerChanger.txt
+build/R6SiegeServerChanger/xref-R6SiegeServerChanger.html
+build/R6SiegeServerChanger/localpycs/pyimod01_archive.pyc
+build/R6SiegeServerChanger/localpycs/pyimod02_importers.pyc
+build/R6SiegeServerChanger/localpycs/pyimod03_ctypes.pyc
+build/R6SiegeServerChanger/localpycs/pyimod04_pywin32.pyc
+build/R6SiegeServerChanger/localpycs/struct.pyc
+dist/R6SiegeServerChanger.exe
