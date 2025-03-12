@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['tkinter', 'json'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -17,6 +17,16 @@ a = Analysis(
     cipher=block_cipher,
     noarchive=False,
 )
+
+# Clean up unnecessary binaries to reduce false positives
+excluded_binaries = [
+    'vcruntime140.dll',  # Already on most systems
+    'VCRUNTIME140_1.dll',
+    'api-ms-win',  # Windows system DLLs
+    'Qt5',
+]
+
+a.binaries = TOC([x for x in a.binaries if not any(excluded in x[0] for excluded in excluded_binaries)])
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
@@ -40,5 +50,13 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='NONE'
+    icon='r6_icon.ico' if os.path.exists('r6_icon.ico') else None,
+    # Version information
+    version='1.0.0',
+    file_version='1.0.0',
+    product_version='1.0.0',
+    file_description='Rainbow Six Siege Server Changer',
+    product_name='R6 Server Changer',
+    company_name='',
+    uac_admin=False,
 )

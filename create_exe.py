@@ -1,54 +1,47 @@
 import os
 import sys
 import subprocess
-import tkinter
-import site
+from pathlib import Path
 
-def get_tk_path():
-    return os.path.dirname(tkinter.__file__)
-
-def get_python_path():
-    return sys.executable
-
-def get_pyinstaller_path():
-    possible_paths = [
-        os.path.join(site.USER_SITE, "Scripts", "pyinstaller.exe"),
-        os.path.join(site.USER_BASE, "Scripts", "pyinstaller.exe"),
-        os.path.join(os.path.dirname(sys.executable), "Scripts", "pyinstaller.exe"),
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            return path
-    return "pyinstaller"
-
-def create_exe():
+def build_executable():
     script_name = "r6_server_changer.py"
-    tk_path = get_tk_path()
-    tcl_path = os.path.join(tk_path, "tcl")
-    tk_dll_path = os.path.join(tk_path, "tk")
-    
-    pyinstaller_path = get_pyinstaller_path()
-    python_path = get_python_path()
-
-    command = [
-        python_path,
-        pyinstaller_path,
-        "--onefile",
-        "--windowed",
-        f"--add-data={tcl_path};tcl",
-        f"--add-data={tk_dll_path};tk",
-        script_name
-    ]
-
-    print("Executing command:", " ".join(command))
+    output_name = "R6SiegeServerChanger"
     
     try:
-        subprocess.run(command, check=True)
-        print(f"Executable created successfully. Check the 'dist' folder for {script_name.replace('.py', '.exe')}")
-    except subprocess.CalledProcessError as e:
-        print(f"Error occurred: {e}")
-        print("Command output:")
-        print(e.output)
+        subprocess.run([sys.executable, "-m", "PyInstaller", "--version"], 
+                       check=True, capture_output=True)
+    except subprocess.CalledProcessError:
+        print("PyInstaller not found. Installing...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
+    
+    command = [
+        sys.executable, "-m", "PyInstaller",
+        "--clean",
+        "--name", output_name,
+        "--onefile",
+        "--windowed",
+        "--noconsole",
+        "--hidden-import", "tkinter",
+        "--hidden-import", "json",
+        "--icon", "r6_icon.ico" if os.path.exists("r6_icon.ico") else "NONE",
+        script_name
+    ]
+    
+    print(f"Building executable with command: {' '.join(command)}")
+    
+    result = subprocess.run(command, capture_output=True, text=True)
+    
+    if result.returncode == 0:
+        exe_path = Path("dist") / f"{output_name}.exe"
+        print(f"✅ Build successful! Executable created at: {exe_path.absolute()}")
+        print("\nNOTES:")
+        print("1. If Windows Defender shows a warning, this is normal for PyInstaller executables")
+        print("   You may need to add an exception or submit for Microsoft analysis")
+        print("2. Distribute with r6_icon.ico in the same folder (if you're using an icon)")
+    else:
+        print(f"❌ Build failed with error code: {result.returncode}")
+        print("Error output:")
+        print(result.stderr)
 
 if __name__ == "__main__":
-    create_exe()
+    build_executable()
