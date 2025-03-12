@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-block_cipher = None
 
 a = Analysis(
     ['r6_server_changer.py'],
@@ -12,28 +11,15 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
-    win_no_prefer_redirects=False,
-    win_private_assemblies=False,
-    cipher=block_cipher,
     noarchive=False,
+    optimize=0,
 )
-
-excluded_binaries = [
-    'vcruntime140.dll',
-    'VCRUNTIME140_1.dll',
-    'api-ms-win',
-    'Qt5',
-]
-
-a.binaries = TOC([x for x in a.binaries if not any(excluded in x[0] for excluded in excluded_binaries)])
-
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+pyz = PYZ(a.pure)
 
 exe = EXE(
     pyz,
     a.scripts,
     a.binaries,
-    a.zipfiles,
     a.datas,
     [],
     name='R6SiegeServerChanger',
@@ -49,13 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='r6_icon.ico' if os.path.exists('r6_icon.ico') else None,
-    # Version information
-    version='1.0.0',
-    file_version='1.0.0',
-    product_version='1.0.0',
-    file_description='Rainbow Six Siege Server Changer',
-    product_name='R6 Server Changer',
-    company_name='',
-    uac_admin=False,
+    icon='NONE',
 )
